@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Agree from "./agree/Agree";
 
 function App() {
-  const [isAgreed, setIsAgreed] = useState(false);
   return <Agree />;
 }
 
