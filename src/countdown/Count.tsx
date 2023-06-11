@@ -1,39 +1,44 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import "./Count.css";
 
 import Timer from "./Timer";
 
 const getDisplayTime = () => {
   const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 7);
+  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 8);
   return expiryTimestamp;
 };
 
 const getFirstAlarmTime = () => {
   const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 2);
+  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 3);
   return expiryTimestamp;
 };
 
-const Countdown = () => {
+interface Props {
+  onStart1: () => void;
+  onStart2: () => void;
+}
+
+const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
   const [displayTime] = useState(getDisplayTime());
   const [firstTime] = useState(getFirstAlarmTime());
 
   const [show1st, setShow1st] = useState(false);
   const [show2nd, setShow2nd] = useState(false);
 
-  const refresh = () => {
-    window.location.reload();
-  };
-
   const firstAlarm = () => {
     setShow1st(true);
-    console.log("1end");
+    onStart1();
   };
 
   const endAlarm = () => {
     setShow2nd(true);
-    console.log("2nd");
+    onStart2();
+  };
+
+  const refresh = () => {
+    window.location.reload();
   };
 
   return (
