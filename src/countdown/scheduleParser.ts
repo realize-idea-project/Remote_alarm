@@ -1,15 +1,10 @@
 import _ from "lodash";
-import {
-  AlarmSchedule,
-  AlarmScheduleTable,
-  ScheduleProtocolTable,
-} from "./types";
+import { AlarmSchedule, AlarmScheduleTable } from "./types";
 
 const THIRTY_MINUTES = 1;
 
-export const parseSchedule = (protocol: ScheduleProtocolTable) => {
-  const currentDay = new Date().getDate();
-  const scheduleList = JSON.parse(protocol[currentDay]);
+export const parseSchedule = (protocol: string) => {
+  const scheduleList = JSON.parse(protocol);
 
   const pre30AlarmList = _.chain<AlarmSchedule>(scheduleList)
     .map(([start, end]) => end)
