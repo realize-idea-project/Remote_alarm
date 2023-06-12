@@ -1,7 +1,12 @@
-import React, { FC, useState } from "react";
-import "./Count.css";
+import React, { FC, useEffect, useState } from "react";
+import _ from "lodash";
 
-import Timer from "./Timer";
+import { useRealTimeDB } from "../firebase/useRealTimeDB";
+import { Clock } from "./clock/Clock";
+import { parseSchedule } from "./scheduleParser";
+import { AlarmSchedule, Schedule, ScheduleProtocolTable } from "./types";
+
+import "./Count.css";
 
 const getDisplayTime = () => {
   const expiryTimestamp = new Date();
@@ -21,6 +26,18 @@ interface Props {
 }
 
 const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
+  const { realTimeData } = useRealTimeDB<ScheduleProtocolTable>();
+  const [preAlarmList, setPreAlarmList] = useState<AlarmSchedule[]>([]);
+  const [endAlarmList, setEndAlarmList] = useState<AlarmSchedule[]>([]);
+
+  useEffect(() => {
+    if (!_.isNil(realTimeData)) {
+      const [pre, end] = parseSchedule(realTimeData);
+      setPreAlarmList(pre);
+      setEndAlarmList(end);
+    }
+  }, [realTimeData]);
+
   const [displayTime] = useState(getDisplayTime());
   const [firstTime] = useState(getFirstAlarmTime());
 
@@ -43,14 +60,15 @@ const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
 
   return (
     <div className="board">
-      <div className="hide">
+      <Clock />
+      {/* <div className="hide">
         <Timer time={firstTime} onEnd={firstAlarm} />
-      </div>
-      <Timer time={displayTime} onEnd={endAlarm} />
-      <div className="alarm__text">
+      </div> */}
+      {/* <Timer time={displayTime} onEnd={endAlarm} /> */}
+      {/* <div className="alarm__text">
         {show1st && <div>1차 알림</div>}
         {show2nd && <div>2차 알림</div>}
-      </div>
+      </div> */}
       <button className="refresh" onClick={refresh}>
         다시 시작
       </button>
