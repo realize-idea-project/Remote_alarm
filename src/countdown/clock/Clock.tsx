@@ -15,21 +15,23 @@ interface Props {
 export const Clock: FC<Props> = ({ onChangeSecond }) => {
   const { seconds, minutes, hours, ampm } = useTime({ format: "12-hour" });
 
-  useEffect(() => {
-    onChangeSecond([
-      hours.toString(),
-      getFormattedMinutes(minutes),
-      ampm.toString(),
-    ]);
-  }, [minutes]);
-
   const formattedSecond =
     seconds.toString().length === 1 ? `0${seconds}` : seconds;
+
+  const formattedHour = hours === 0 ? `12` : hours;
+
+  useEffect(() => {
+    onChangeSecond([
+      formattedHour.toString(),
+      getFormattedMinutes(minutes),
+      ampm,
+    ]);
+  }, [seconds]);
 
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{ fontSize: "100px" }}>
-        <span>{hours}</span>:<span>{minutes}</span>:
+        <span>{formattedHour}</span>:<span>{minutes}</span>:
         <span>{formattedSecond}</span>
         <span>{ampm}</span>
       </div>
