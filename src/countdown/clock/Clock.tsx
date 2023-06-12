@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FC, useEffect } from "react";
 import { useTime } from "react-timer-hook";
 import { AlarmSchedule } from "../types";
