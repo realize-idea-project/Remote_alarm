@@ -24,7 +24,7 @@ export const Clock: FC<Props> = ({ onChangeSecond }) => {
 
   useEffect(() => {
     onChangeSecond([formattedHour.toString(), formattedMinutes, ampm]);
-  }, [seconds]);
+  }, [minutes]);
 
   return (
     <Container>

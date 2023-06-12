@@ -75,7 +75,7 @@ const Container = styled.div`
 const AlarmText = styled.div`
   font-size: 1.5rem;
   margin-top: 1rem;
-  height: 2rem;
+  height: 2.5rem;
 `;
 
 const RefreshButton = styled.button`
