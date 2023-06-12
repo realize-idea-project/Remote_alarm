@@ -24,8 +24,8 @@ function App() {
         <Agree onAgree={changeShowTimer} />
       ) : (
         <Countdown
-          onStart1={playAlarm(preAlarm)}
-          onStart2={playAlarm(endAlarm)}
+          onStartPreAlarm={playAlarm(preAlarm)}
+          onStartEndAlarm={playAlarm(endAlarm)}
         />
       )}
       <AudioTag ref={preAlarm} path="first.mp3" />

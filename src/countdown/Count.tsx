@@ -1,50 +1,37 @@
-import { FC, useEffect, useState } from "react";
-import _ from "lodash";
+import { FC } from "react";
 
-import { useRealTimeDB } from "../firebase/useRealTimeDB";
+import { useCount } from "./useCount";
+import { useHint } from "./useHint";
 import { Clock } from "./clock/Clock";
-import { parseSchedule } from "./scheduleParser";
-import {
-  AlarmSchedule,
-  AlarmScheduleTable,
-  ScheduleProtocolTable,
-} from "./types";
+import { AlarmSchedule } from "./types";
 
 import "./Count.css";
 
 interface Props {
-  onStart1: () => void;
-  onStart2: () => void;
+  onStartPreAlarm: () => void;
+  onStartEndAlarm: () => void;
 }
 
-const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
-  const { realTimeData } = useRealTimeDB<ScheduleProtocolTable>();
-  const [preAlarmList, setPreAlarmList] = useState<AlarmScheduleTable>();
-  const [endAlarmList, setEndAlarmList] = useState<AlarmScheduleTable>();
+const Countdown: FC<Props> = ({ onStartPreAlarm, onStartEndAlarm }) => {
+  const {
+    preAlarmList,
+    endAlarmList,
+    consumePreAlarm,
+    consumeEndAlarm,
+    canConsumeAlarm,
+  } = useCount();
 
-  const [showPreAlarmHint, setShowPreAlarmHint] = useState(false);
-  const [showEndAlarmHint, setShowEndAlarmHint] = useState(false);
-
-  useEffect(() => {
-    if (!_.isNil(realTimeData)) {
-      const [pre, end] = parseSchedule(realTimeData);
-      setPreAlarmList(pre);
-      setEndAlarmList(end);
-    }
-  }, [realTimeData]);
-
-  const canTurnOnAlarm = (time: AlarmSchedule, table?: AlarmScheduleTable) => {
-    return !_.isNil(table) ? table[time.toString()] : false;
-  };
+  const [showPreAlarmHint, setShowPreAlarmHint] = useHint(false);
+  const [showEndAlarmHint, setShowEndAlarmHint] = useHint(false);
 
   const triggerPreAlarm = () => {
-    setShowPreAlarmHint(true);
-    onStart1();
+    setShowPreAlarmHint(false);
+    onStartPreAlarm();
   };
 
   const triggerEndAlarm = () => {
     setShowEndAlarmHint(true);
-    onStart2();
+    onStartEndAlarm();
   };
 
   const refresh = () => {
@@ -52,14 +39,14 @@ const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
   };
 
   const handleChangeTime = (time: AlarmSchedule) => {
-    if (canTurnOnAlarm(time, preAlarmList)) {
-      setPreAlarmList(_.omit(preAlarmList, time.toString()));
+    if (canConsumeAlarm(time, preAlarmList)) {
+      consumePreAlarm(time, preAlarmList);
       triggerPreAlarm();
       return;
     }
 
-    if (canTurnOnAlarm(time, endAlarmList)) {
-      setEndAlarmList(_.omit(endAlarmList, time.toString()));
+    if (canConsumeAlarm(time, endAlarmList)) {
+      consumeEndAlarm(time, endAlarmList);
       triggerEndAlarm();
       return;
     }
