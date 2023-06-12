@@ -14,9 +14,14 @@ export const useAlarmHandler = () => {
     setIsMuted(false);
   };
 
+  const mute = () => {
+    setIsMuted(true);
+  };
+
   return {
     ref,
     isMuted,
     cancelMute,
+    mute,
   };
 };

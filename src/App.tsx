@@ -10,12 +10,14 @@ function App() {
     ref: preAlarm,
     isMuted: isPreAlarmMuted,
     cancelMute: cancelMutePreAlarm,
+    mute: mutePreAlarm,
   } = useAlarmHandler();
 
   const {
     ref: endAlarm,
     isMuted: isEndAlarmMuted,
     cancelMute: cancelMuteEndAlarm,
+    mute: muteEndAlarm,
   } = useAlarmHandler();
 
   const changeShowTimer = () => {
@@ -43,6 +45,7 @@ function App() {
         controls
         ref={preAlarm}
         muted={isPreAlarmMuted}
+        onEnded={mutePreAlarm}
         style={{ display: "none" }}
       >
         <source src="first.mp3" type="audio/mp3" />
@@ -51,6 +54,7 @@ function App() {
         controls
         ref={endAlarm}
         muted={isEndAlarmMuted}
+        onEnded={muteEndAlarm}
         style={{ display: "none" }}
       >
         <source src="end.mp3" type="audio/mp3" />
