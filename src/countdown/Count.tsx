@@ -1,18 +1,17 @@
 import { FC } from "react";
+import styled from "styled-components";
 
 import { useCount } from "./useCount";
 import { useHint } from "./useHint";
 import { Clock } from "./clock/Clock";
 import { AlarmSchedule } from "./types";
 
-import "./Count.css";
-
 interface Props {
   onStartPreAlarm: () => void;
   onStartEndAlarm: () => void;
 }
 
-const Countdown: FC<Props> = ({ onStartPreAlarm, onStartEndAlarm }) => {
+export const Countdown: FC<Props> = ({ onStartPreAlarm, onStartEndAlarm }) => {
   const {
     preAlarmList,
     endAlarmList,
@@ -53,18 +52,33 @@ const Countdown: FC<Props> = ({ onStartPreAlarm, onStartEndAlarm }) => {
   };
 
   return (
-    <div className="board">
+    <Container>
       <Clock onChangeSecond={handleChangeTime} />
 
-      <div className="alarm__text">
+      <AlarmText>
         {showPreAlarmHint && <div>1차 알림 1분 후에 마지막 알림 시작</div>}
         {showEndAlarmHint && <div>2차 알림</div>}
-      </div>
-      <button className="refresh" onClick={refresh}>
-        다시 시작
-      </button>
-    </div>
+      </AlarmText>
+      <RefreshButton onClick={refresh}>다시 시작</RefreshButton>
+    </Container>
   );
 };
 
-export default Countdown;
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+`;
+
+const AlarmText = styled.div`
+  font-size: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const RefreshButton = styled.button`
+  margin-top: 3rem;
+  height: 2.5rem;
+  width: 10rem;
+`;
