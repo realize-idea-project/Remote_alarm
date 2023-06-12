@@ -13,11 +13,6 @@ export const useRealTimeDB = <T>() => {
       if (snapshot.exists()) {
         setRealTimeData(snapshot.val());
       }
-      // const scheduleList = snapshot.val();
-      // const today = new Date().getDate();
-      // const todaysSchedule = JSON.parse(scheduleList[today]);
-      // console.log("todaysSchedule", todaysSchedule);
-      // setSchedule(data);
     });
   }, []);
 
