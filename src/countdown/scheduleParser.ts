@@ -1,7 +1,11 @@
 import _ from "lodash";
-import { AlarmSchedule, ScheduleProtocolTable } from "./types";
+import {
+  AlarmSchedule,
+  AlarmScheduleTable,
+  ScheduleProtocolTable,
+} from "./types";
 
-const THIRTY_MINUTES = 30;
+const THIRTY_MINUTES = 1;
 
 export const parseSchedule = (protocol: ScheduleProtocolTable) => {
   const currentDay = new Date().getDate();
@@ -12,6 +16,7 @@ export const parseSchedule = (protocol: ScheduleProtocolTable) => {
     .map(getPreAlarmTime(THIRTY_MINUTES))
     .map(toLocaleString)
     .map(splitLocaleString)
+    .reduce(toTable, {})
     .value();
 
   const endAlarmList = _.chain<AlarmSchedule>(scheduleList)
@@ -19,9 +24,15 @@ export const parseSchedule = (protocol: ScheduleProtocolTable) => {
     .map((localeString) => new Date(localeString))
     .map(toLocaleString)
     .map(splitLocaleString)
+    .reduce(toTable, {})
     .value();
 
-  return [pre30AlarmList, endAlarmList] as AlarmSchedule[][];
+  return [pre30AlarmList, endAlarmList];
+};
+
+const toTable = (acc: AlarmScheduleTable, cur: string[]) => {
+  acc[cur.toString()] = cur as AlarmSchedule;
+  return acc;
 };
 
 const getPreAlarmTime = (gapMinutes: number) => (time: string) => {

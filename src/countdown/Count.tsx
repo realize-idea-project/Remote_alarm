@@ -1,24 +1,16 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import _ from "lodash";
 
 import { useRealTimeDB } from "../firebase/useRealTimeDB";
 import { Clock } from "./clock/Clock";
 import { parseSchedule } from "./scheduleParser";
-import { AlarmSchedule, Schedule, ScheduleProtocolTable } from "./types";
+import {
+  AlarmSchedule,
+  AlarmScheduleTable,
+  ScheduleProtocolTable,
+} from "./types";
 
 import "./Count.css";
-
-const getDisplayTime = () => {
-  const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 8);
-  return expiryTimestamp;
-};
-
-const getFirstAlarmTime = () => {
-  const expiryTimestamp = new Date();
-  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 3);
-  return expiryTimestamp;
-};
 
 interface Props {
   onStart1: () => void;
@@ -27,8 +19,11 @@ interface Props {
 
 const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
   const { realTimeData } = useRealTimeDB<ScheduleProtocolTable>();
-  const [preAlarmList, setPreAlarmList] = useState<AlarmSchedule[]>([]);
-  const [endAlarmList, setEndAlarmList] = useState<AlarmSchedule[]>([]);
+  const [preAlarmList, setPreAlarmList] = useState<AlarmScheduleTable>();
+  const [endAlarmList, setEndAlarmList] = useState<AlarmScheduleTable>();
+
+  const [showPreAlarmHint, setShowPreAlarmHint] = useState(false);
+  const [showEndAlarmHint, setShowEndAlarmHint] = useState(false);
 
   useEffect(() => {
     if (!_.isNil(realTimeData)) {
@@ -38,19 +33,17 @@ const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
     }
   }, [realTimeData]);
 
-  const [displayTime] = useState(getDisplayTime());
-  const [firstTime] = useState(getFirstAlarmTime());
+  const canTurnOnAlarm = (time: AlarmSchedule, table?: AlarmScheduleTable) => {
+    return !_.isNil(table) ? table[time.toString()] : false;
+  };
 
-  const [show1st, setShow1st] = useState(false);
-  const [show2nd, setShow2nd] = useState(false);
-
-  const firstAlarm = () => {
-    setShow1st(true);
+  const triggerPreAlarm = () => {
+    setShowPreAlarmHint(true);
     onStart1();
   };
 
-  const endAlarm = () => {
-    setShow2nd(true);
+  const triggerEndAlarm = () => {
+    setShowEndAlarmHint(true);
     onStart2();
   };
 
@@ -58,17 +51,28 @@ const Countdown: FC<Props> = ({ onStart1, onStart2 }) => {
     window.location.reload();
   };
 
+  const handleChangeTime = (time: AlarmSchedule) => {
+    if (canTurnOnAlarm(time, preAlarmList)) {
+      setPreAlarmList(_.omit(preAlarmList, time.toString()));
+      triggerPreAlarm();
+      return;
+    }
+
+    if (canTurnOnAlarm(time, endAlarmList)) {
+      setEndAlarmList(_.omit(endAlarmList, time.toString()));
+      triggerEndAlarm();
+      return;
+    }
+  };
+
   return (
     <div className="board">
-      <Clock />
-      {/* <div className="hide">
-        <Timer time={firstTime} onEnd={firstAlarm} />
-      </div> */}
-      {/* <Timer time={displayTime} onEnd={endAlarm} /> */}
-      {/* <div className="alarm__text">
-        {show1st && <div>1차 알림</div>}
-        {show2nd && <div>2차 알림</div>}
-      </div> */}
+      <Clock onChangeSecond={handleChangeTime} />
+
+      <div className="alarm__text">
+        {showPreAlarmHint && <div>1차 알림 1분 후에 마지막 알림 시작</div>}
+        {showEndAlarmHint && <div>2차 알림</div>}
+      </div>
       <button className="refresh" onClick={refresh}>
         다시 시작
       </button>
