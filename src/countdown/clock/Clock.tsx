@@ -22,10 +22,14 @@ export const Clock: FC<Props> = ({ onChangeSecond }) => {
     ]);
   }, [minutes]);
 
+  const formattedSecond =
+    seconds.toString().length === 1 ? `0${seconds}` : seconds;
+
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{ fontSize: "100px" }}>
-        <span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
+        <span>{hours}</span>:<span>{minutes}</span>:
+        <span>{formattedSecond}</span>
         <span>{ampm}</span>
       </div>
     </div>
