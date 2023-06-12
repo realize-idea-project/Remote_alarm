@@ -24,7 +24,7 @@ export const Countdown: FC<Props> = ({ onStartPreAlarm, onStartEndAlarm }) => {
   const [showEndAlarmHint, setShowEndAlarmHint] = useHint(false);
 
   const triggerPreAlarm = () => {
-    setShowPreAlarmHint(false);
+    setShowPreAlarmHint(true);
     onStartPreAlarm();
   };
 
@@ -75,10 +75,10 @@ const Container = styled.div`
 const AlarmText = styled.div`
   font-size: 1.5rem;
   margin-top: 1rem;
+  height: 2rem;
 `;
 
 const RefreshButton = styled.button`
-  margin-top: 3rem;
   height: 2.5rem;
   width: 10rem;
 `;

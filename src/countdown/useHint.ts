@@ -8,7 +8,7 @@ export const useHint = (initialValue: boolean) => {
 
     const timer = setTimeout(() => {
       setHint(false);
-    }, 1000);
+    }, 5000);
 
     return () => {
       clearTimeout(timer);
