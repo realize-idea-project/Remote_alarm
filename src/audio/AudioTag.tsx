@@ -1,16 +1,35 @@
-import { FC } from "react";
-import { useAlarmHandler } from "../useAlarm";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
+export interface CustomAudioRef {
+  play: () => void;
+}
 interface Props {
-  src: any;
+  path: string;
 }
 
-export const AudioTag: FC<Props> = ({ src }) => {
-  const { ref, isMuted, cancelMute } = useAlarmHandler();
+export const AudioTag = forwardRef<CustomAudioRef, Props>(({ path }, ref) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      audioRef.current?.play();
+    },
+  }));
+
+  const muteAgain = () => {
+    setIsMuted(false);
+  };
 
   return (
-    <audio controls ref={ref} muted={isMuted} style={{ display: "none" }}>
-      <source src={src} type="audio/mp3" />
+    <audio
+      controls
+      ref={audioRef}
+      onEnded={muteAgain}
+      muted={isMuted}
+      style={{ display: "none" }}
+    >
+      <source src={path} type="audio/mp3" />
     </audio>
   );
-};
+});

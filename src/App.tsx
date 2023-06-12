@@ -1,24 +1,12 @@
-import React, { useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import Agree from "./agree/Agree";
 import Countdown from "./countdown/Count";
-import { useAlarmHandler } from "./useAlarm";
+import { AudioTag, CustomAudioRef } from "./audio/AudioTag";
 
 function App() {
   const [showTimer, setShowTimer] = useState(false);
-
-  const {
-    ref: preAlarm,
-    isMuted: isPreAlarmMuted,
-    cancelMute: cancelMutePreAlarm,
-    mute: mutePreAlarm,
-  } = useAlarmHandler();
-
-  const {
-    ref: endAlarm,
-    isMuted: isEndAlarmMuted,
-    cancelMute: cancelMuteEndAlarm,
-    mute: muteEndAlarm,
-  } = useAlarmHandler();
+  const preAlarm = useRef<CustomAudioRef>(null);
+  const endAlarm = useRef<CustomAudioRef>(null);
 
   const changeShowTimer = () => {
     preAlarm.current?.play();
@@ -26,12 +14,8 @@ function App() {
     setShowTimer(true);
   };
 
-  const playPreAlarm = () => {
-    cancelMutePreAlarm();
-  };
-
-  const playEndAlarm = () => {
-    cancelMuteEndAlarm();
+  const playAlarm = (ref: RefObject<CustomAudioRef>) => () => {
+    ref.current?.play();
   };
 
   return (
@@ -39,26 +23,13 @@ function App() {
       {!showTimer ? (
         <Agree onAgree={changeShowTimer} />
       ) : (
-        <Countdown onStart1={playPreAlarm} onStart2={playEndAlarm} />
+        <Countdown
+          onStart1={playAlarm(preAlarm)}
+          onStart2={playAlarm(endAlarm)}
+        />
       )}
-      <audio
-        controls
-        ref={preAlarm}
-        muted={isPreAlarmMuted}
-        onEnded={mutePreAlarm}
-        style={{ display: "none" }}
-      >
-        <source src="first.mp3" type="audio/mp3" />
-      </audio>
-      <audio
-        controls
-        ref={endAlarm}
-        muted={isEndAlarmMuted}
-        onEnded={muteEndAlarm}
-        style={{ display: "none" }}
-      >
-        <source src="end.mp3" type="audio/mp3" />
-      </audio>
+      <AudioTag ref={preAlarm} path="first.mp3" />
+      <AudioTag ref={endAlarm} path="end.mp3" />
     </div>
   );
 }
