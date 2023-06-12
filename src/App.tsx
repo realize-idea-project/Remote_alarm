@@ -1,5 +1,5 @@
 import { RefObject, useRef, useState } from "react";
-import Agree from "./agree/Agree";
+import { Agree } from "./agree/Agree";
 import Countdown from "./countdown/Count";
 import { AudioTag, CustomAudioRef } from "./audio/AudioTag";
 
