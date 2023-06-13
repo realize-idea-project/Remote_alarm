@@ -42,5 +42,5 @@ const Container = styled.div`
 `;
 
 const Numbers = styled.div`
-  font-size: 4rem;
+  font-size: 3.5rem;
 `;
