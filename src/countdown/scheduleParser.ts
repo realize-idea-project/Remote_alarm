@@ -7,7 +7,7 @@ export const parseSchedule = (protocol: string) => {
   const scheduleList = JSON.parse(protocol);
 
   const pre30AlarmList = _.chain<AlarmSchedule>(scheduleList)
-    .map(([start, end]) => end)
+    .map(([id, start, end]) => end)
     .map(getPreAlarmTime(THIRTY_MINUTES))
     .map(toLocaleString)
     .map(splitLocaleString)
@@ -15,7 +15,7 @@ export const parseSchedule = (protocol: string) => {
     .value();
 
   const endAlarmList = _.chain<AlarmSchedule>(scheduleList)
-    .map(([start, end]) => end)
+    .map(([id, start, end]) => end)
     .map((localeString) => new Date(localeString))
     .map(toLocaleString)
     .map(splitLocaleString)
