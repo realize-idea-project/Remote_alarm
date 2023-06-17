@@ -6,16 +6,14 @@ const THIRTY_MINUTES = 1;
 export const parseSchedule = (protocol: string) => {
   const scheduleList = JSON.parse(protocol);
 
-  const pre30AlarmList = _.chain<AlarmSchedule>(scheduleList)
-    .map(([id, start, end]) => end)
+  const pre30AlarmList = _.chain(scheduleList)
     .map(getPreAlarmTime(THIRTY_MINUTES))
     .map(toLocaleString)
     .map(splitLocaleString)
     .reduce(toTable, {})
     .value();
 
-  const endAlarmList = _.chain<AlarmSchedule>(scheduleList)
-    .map(([id, start, end]) => end)
+  const endAlarmList = _.chain(scheduleList)
     .map((localeString) => new Date(localeString))
     .map(toLocaleString)
     .map(splitLocaleString)
@@ -25,7 +23,7 @@ export const parseSchedule = (protocol: string) => {
   return [pre30AlarmList, endAlarmList];
 };
 
-const toTable = (acc: AlarmScheduleTable, cur: string[]) => {
+const toTable = (acc: AlarmScheduleTable, cur: any) => {
   acc[cur.toString()] = cur as AlarmSchedule;
   return acc;
 };
