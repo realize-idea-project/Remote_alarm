@@ -1,12 +1,13 @@
 import _ from "lodash";
 import { AlarmSchedule, AlarmScheduleTable } from "./types";
 
-const THIRTY_MINUTES = 1;
+const THIRTY_MINUTES = 30;
 
 export const parseSchedule = (protocol: string) => {
   const scheduleList = JSON.parse(protocol);
 
   const pre30AlarmList = _.chain(scheduleList)
+    .map((list) => _.last(list))
     .map(getPreAlarmTime(THIRTY_MINUTES))
     .map(toLocaleString)
     .map(splitLocaleString)
@@ -14,7 +15,8 @@ export const parseSchedule = (protocol: string) => {
     .value();
 
   const endAlarmList = _.chain(scheduleList)
-    .map((localeString) => new Date(localeString))
+    .map((list) => _.last(list))
+    .map((localeString: string) => new Date(localeString))
     .map(toLocaleString)
     .map(splitLocaleString)
     .reduce(toTable, {})
